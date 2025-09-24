@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     const userAccount = new Account(client);
     await userAccount.createVerification({
-      url: "http://localhost:3000/verify",
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/verify`,
     });
 
     await userAccount.deleteSession({ sessionId: session.$id });
