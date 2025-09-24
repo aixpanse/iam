@@ -1,6 +1,7 @@
 'use client'
 import { GalleryVerticalEnd } from "lucide-react"
 import { UpdatePasswordForm } from "@/components/update-password-form"
+import { Suspense } from "react"
 
 export default function PasswordPage() {
   return (
@@ -16,7 +17,9 @@ export default function PasswordPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <UpdatePasswordForm />
+            <Suspense fallback={<div>Loading...</div>}>
+              <UpdatePasswordForm />
+            </Suspense>
           </div>
         </div>
       </div>

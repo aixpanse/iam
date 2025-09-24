@@ -6,10 +6,10 @@ import z from "zod";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { appId: string } },
+  { params }: { params: Promise<{ appId: string }> },
 ) {
   const user = await getLoggedInUser();
-  const { appId } = params;
+  const { appId } = await params;
 
   if (!user?.labels?.includes("iam")) {
     return NextResponse.json(
