@@ -1,9 +1,12 @@
-'use client'
-import { GalleryVerticalEnd } from "lucide-react"
-import { UpdatePasswordForm } from "@/components/update-password-form"
-import { Suspense } from "react"
+import { GalleryVerticalEnd } from "lucide-react";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function PasswordPage() {
+export default function AuthLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -17,8 +20,20 @@ export default function PasswordPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <Suspense fallback={<div>Loading...</div>}>
-              <UpdatePasswordForm />
+            <Suspense fallback={
+              <div className="flex flex-col space-y-5">
+                <div className="space-y-2">
+                  <Skeleton className="mx-10 h-10 rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="mx-30 w-15 h-4 rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="mx-30 w-15 h-4 rounded-xl" />
+                </div>
+              </div>
+            }>
+              {children}
             </Suspense>
           </div>
         </div>
@@ -31,5 +46,5 @@ export default function PasswordPage() {
         />
       </div>
     </div>
-  )
+  );
 }

@@ -29,7 +29,7 @@ export default function UnauthorizedPage() {
                             Go Back Home
                         </Button>
                     </Link>
-                    <Link href="/account" className="flex-1">
+                    <Link href="/auth/account" className="flex-1">
                         <Button className="w-full">
                             View Profile
                         </Button>

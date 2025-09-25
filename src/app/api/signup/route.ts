@@ -1,18 +1,18 @@
-import { adminClient, client } from "@/lib/appwrite/client";
-import { NextRequest, NextResponse } from "next/server";
-import { Account, Query, Teams, Users } from "node-appwrite";
-import { z } from "zod";
-import * as uuid from "uuid";
+import { adminClient, client } from '@/lib/appwrite/client';
+import { NextRequest, NextResponse } from 'next/server';
+import { Account, Query, Teams, Users } from 'node-appwrite';
+import { z } from 'zod';
+import * as uuid from 'uuid';
 
 const FormSchema = z.object({
   name: z.string().optional(),
-  email: z.email({ message: "Invalid email address" }),
+  email: z.email({ message: 'Invalid email address' }),
   password: z
     .string()
-    .min(8, { message: "Password must have at least 8 characters" }),
+    .min(8, { message: 'Password must have at least 8 characters' }),
   confirmPassword: z
     .string()
-    .min(8, { message: "Password must have at least 8 characters" }),
+    .min(8, { message: 'Password must have at least 8 characters' }),
   label: z.string().optional(),
   domain: z.string().optional(),
 });
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
   try {
     if (payload.password !== payload.confirmPassword) {
-      throw Error("Passwords are not the same");
+      throw Error('Passwords are not the same');
     }
 
     const userId = uuid.v4();
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     if (payload.domain) {
       await teams.createMembership({
         teamId: payload.domain,
-        roles: ["member"],
+        roles: ['member'],
         userId,
         email: payload.email,
         name: payload.name,
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     const userAccount = new Account(client);
     await userAccount.createVerification({
-      url: `${process.env.NEXT_PUBLIC_APP_URL}/verify`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify`,
     });
 
     await userAccount.deleteSession({ sessionId: session.$id });

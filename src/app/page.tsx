@@ -62,7 +62,7 @@ export default function Home() {
               {hasIamAccess(user) && (
                 <DropdownMenuItem onClick={() => router.push('/dashboard')}>Dashboard</DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => router.push('/account')} disabled={!user}>Profile</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/auth/account')} disabled={!user}>Profile</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} disabled={!user}>
                 Log out
@@ -81,8 +81,8 @@ export default function Home() {
             login to your app, you are in the right place!
           </p>
           <div>
-            <Button onClick={() => router.push('signin')} variant="secondary" className="mr-4">Log in</Button>
-            <Button onClick={() => router.push('signup')} className="cursor-pointer">Create account</Button>
+            <Button onClick={() => router.push('/auth/signin')} variant="secondary" className="mr-4">Log in</Button>
+            <Button onClick={() => router.push('/auth/signup')} className="cursor-pointer">Create account</Button>
           </div>
         </div>
         <img src="/password-lock-key-dark.png" alt="Logo" className="hidden md:block w-100 h-100" />

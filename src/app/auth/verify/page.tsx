@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { AlertCircleIcon } from "lucide-react"
 import { IconCheck } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Models } from "node-appwrite"
 
-export function VerifyContent() {
+export default function VerifyPage() {
   const [user, setUser] = useState<Models.User | null>(null);
   const [error, setError] = useState('');
   const searchParams = useSearchParams();
@@ -22,7 +22,7 @@ export function VerifyContent() {
       const user = await getLoggedInUser();
       if (!user) {
         await setCookie('verify', JSON.stringify({ secret, userId }));
-        return redirect(`/signin?redirectUrl=/verify`);
+        return redirect(`/auth/signin?redirectUrl=/auth/verify`);
       }
 
       setUser(user);

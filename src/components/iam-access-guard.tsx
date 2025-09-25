@@ -32,7 +32,7 @@ export async function IamAccessGuard({ children }: { children: React.ReactNode }
 
     // Redirect to signin if not logged in
     if (!user) {
-        redirect("/signin")
+        redirect("/auth/signin")
     }
 
     // Check if user has "iam" label for dashboard access
