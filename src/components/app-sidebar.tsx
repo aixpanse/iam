@@ -1,43 +1,36 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Home, LayoutList, Gauge } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
-import { get } from "http"
-import { getLoggedInUser } from "@/lib/auth/appwrite"
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-
-// Menu items.
 const items = [
     {
         title: "Home",
-        url: "/dashboard",
+        url: "/",
         icon: Home,
+    },
+    {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: Gauge,
     },
     {
         title: "Apps",
         url: "/dashboard/apps",
-        icon: Inbox,
+        icon: LayoutList,
     },
 ]
 
 export async function AppSidebar() {
-    const user = await getLoggedInUser();
-
     return (
-        <Sidebar>
-            <SidebarHeader >
-                <a href="/">IAM</a>
-            </SidebarHeader>
+        <Sidebar collapsible="icon" variant="sidebar">
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
@@ -56,15 +49,6 @@ export async function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter >
-                <div className="flex items-center justify-between gap-3 p-2">
-                    {user?.name}
-                    <Avatar className="">
-                        <AvatarImage src="" alt="@shadcn" />
-                        <AvatarFallback >{user?.name.slice(0, 2)}</AvatarFallback>
-                    </Avatar>
-                </div>
-            </SidebarFooter>
         </Sidebar>
     )
 }

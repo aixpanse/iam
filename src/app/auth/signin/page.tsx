@@ -22,7 +22,7 @@ import {
 import { useState } from "react"
 import { setCookie } from 'cookies-next';
 import { SESSION_ID } from "@/lib/auth/consts"
-import { redirect, useSearchParams } from "next/navigation"
+import { redirect, RedirectType, useSearchParams } from "next/navigation"
 import { getLoggedInUser } from "@/lib/auth/appwrite"
 
 const FormSchema = z.object({
@@ -90,9 +90,9 @@ export default function SigninPage() {
           if (redirectUrl.startsWith('http')) {
             const url = new URL(redirectUrl);
             url.searchParams.set('session', data.session);
-            redirect(url.toString());
+            redirect(url.toString(), RedirectType.replace);
           } else {
-            redirect(redirectUrl);
+            redirect(redirectUrl, RedirectType.replace);
           }
         }
       }
