@@ -13,14 +13,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { AlertCircleIcon, Loader2Icon } from "lucide-react"
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
+import { Loader2Icon } from "lucide-react"
 import { redirect, useSearchParams } from "next/navigation"
 import { IconCheck } from "@tabler/icons-react"
+import FormError from "@/components/form-error"
 
 const FormSchema = z.object({
   password: z.string().min(8, { message: "Password must have at least 8 characters" }),
@@ -85,13 +81,11 @@ export default function UpdatePasswordPage() {
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Enter your new password</h1>
         </div>
-        {form.formState.errors.formError && <Alert variant="destructive">
-          <AlertCircleIcon />
-          <AlertTitle>Unable to update password</AlertTitle>
-          <AlertDescription>
-            <p>{form.formState.errors.formError.message}</p>
-          </AlertDescription>
-        </Alert>}
+        <FormError
+          hide={!form.formState.errors.formError}
+          title="Unable to update password"
+          description={form.formState.errors.formError?.message}
+        />
         <div className="grid gap-6">
           <div className="grid gap-3">
             <FormField

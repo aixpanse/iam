@@ -1,14 +1,13 @@
 'use client';
-import { AlertCircleIcon } from "lucide-react"
 import { IconCheck } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { getLoggedInUser } from "@/lib/auth/appwrite"
 import { redirect, useSearchParams } from "next/navigation"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Models } from "node-appwrite"
+import FormError from "@/components/form-error";
 
 export default function VerifyPage() {
   const [user, setUser] = useState<Models.User | null>(null);
@@ -77,13 +76,11 @@ export default function VerifyPage() {
 
   return (
     <div className="w-full max-w-xs">
-      {error && <Alert variant="destructive">
-        <AlertCircleIcon />
-        <AlertTitle>Unable to verify</AlertTitle>
-        <AlertDescription>
-          <p>{error}</p>
-        </AlertDescription>
-      </Alert>}
+      <FormError
+        hide={!error}
+        title="Unable to verify"
+        description={error}
+      />
       {!error && <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Account verified</h1>
         <IconCheck className="text-green-600" />

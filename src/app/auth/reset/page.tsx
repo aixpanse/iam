@@ -13,14 +13,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { applyFormErrors, cn } from "@/lib/utils"
-import { AlertCircleIcon, Loader2Icon } from "lucide-react"
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
+import { Loader2Icon } from "lucide-react"
 import { redirect } from "next/navigation"
 import { IconCheck } from "@tabler/icons-react"
+import FormError from "@/components/form-error"
 
 const FormSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -65,13 +61,11 @@ export default function ResetPasswordPage() {
             Reset your password
           </h1>
         </div>
-        {form.formState.errors.formError && <Alert variant="destructive">
-          <AlertCircleIcon />
-          <AlertTitle>Unable to login</AlertTitle>
-          <AlertDescription>
-            <p>{form.formState.errors.formError.message}</p>
-          </AlertDescription>
-        </Alert>}
+        <FormError
+          hide={!form.formState.errors.formError}
+          title="Unable to send reset email"
+          description={form.formState.errors.formError?.message}
+        />
         <div className="grid gap-6">
           <div className="grid gap-3">
             <FormField

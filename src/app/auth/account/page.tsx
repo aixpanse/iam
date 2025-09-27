@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge"
 import { Models } from "node-appwrite"
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import FormError from "@/components/form-error";
 
 const DeleteFormSchema = z.object({
   delete: z.string().refine((val) => val === "delete", {
@@ -83,6 +84,7 @@ export default function AccountPage() {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
+    
     if (hasFormErrors(data)) {
       applyFormErrors(userForm, data);
     } else {
@@ -129,13 +131,11 @@ export default function AccountPage() {
               {user?.emailVerification ? "Verified" : "Unverified"}
             </Badge>
           </div>
-          {userForm.formState.errors.formError && <Alert variant="destructive">
-            <AlertCircleIcon />
-            <AlertTitle>Your account</AlertTitle>
-            <AlertDescription>
-              <p>{userForm.formState.errors.formError.message}</p>
-            </AlertDescription>
-          </Alert>}
+          <FormError
+            hide={!userForm.formState.errors.formError}
+            title="Unable to update account"
+            description={userForm.formState.errors.formError?.message}
+          />
           <div className="grid gap-6">
             <div className="grid gap-3">
               <FormField

@@ -1,21 +1,16 @@
 'use client';
 import {
     AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "./ui/button";
-import { AlertCircleIcon, Loader2Icon, PlusIcon } from "lucide-react";
+import { Loader2Icon, PlusIcon } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import {
     Form,
     FormControl,
@@ -28,6 +23,7 @@ import { Input } from "./ui/input";
 import { applyFormErrors, cn, hasFormErrors } from "@/lib/utils";
 import { useState } from "react";
 import { useCreateApp } from "@/hooks/use-apps";
+import FormError from "./form-error";
 
 const FormSchema = z.object({
     name: z.string().min(1, { message: "App name is required" }),
@@ -77,13 +73,11 @@ export function CreateAppFormDialog({
                 </AlertDialogDescription>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
-                        {form.formState.errors.formError && <Alert variant="destructive">
-                            <AlertCircleIcon />
-                            <AlertTitle>Unable to create an app</AlertTitle>
-                            <AlertDescription>
-                                <p>{form.formState.errors.formError.message}</p>
-                            </AlertDescription>
-                        </Alert>}
+                        <FormError
+                            hide={!form.formState.errors.formError}
+                            title="Unable to create an app"
+                            description={form.formState.errors.formError?.message}
+                        />
                         <div className="grid gap-6">
                             <div className="grid gap-3">
                                 <FormField

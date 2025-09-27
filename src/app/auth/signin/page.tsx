@@ -13,21 +13,18 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { applyFormErrors, cn, hasFormErrors } from "@/lib/utils"
-import { AlertCircleIcon, Loader2Icon } from "lucide-react"
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
+import { Loader2Icon } from "lucide-react"
 import { useState } from "react"
 import { setCookie } from 'cookies-next';
 import { SESSION_ID } from "@/lib/auth/consts"
 import { redirect, RedirectType, useSearchParams } from "next/navigation"
 import { getLoggedInUser } from "@/lib/auth/appwrite"
+import FormError from "@/components/form-error"
 
 const FormSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
   password: z.string().min(8, { message: "Password must have at least 8 characters" }),
+  formError: z.string().optional(),
 });
 
 export default function SigninPage() {
@@ -38,7 +35,6 @@ export default function SigninPage() {
       password: "",
     },
   })
-  const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirectUrl');
@@ -60,7 +56,7 @@ export default function SigninPage() {
       if (hasFormErrors(data)) {
         applyFormErrors(form, data);
       } else {
-        setFormError('')
+        form.setValue('formError', '')
         console.log(data.session)
         await setCookie(SESSION_ID, data.session);
         if (!redirectUrl) {
@@ -72,7 +68,7 @@ export default function SigninPage() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ sessionId: 'current' }),
             });
-            setFormError('You do not have an IAM account');
+            form.setValue('formError', 'You do not have an IAM account');
             return;
           }
           redirect('/dashboard');
@@ -99,13 +95,11 @@ export default function SigninPage() {
             Login to your account
           </h1>
         </div>
-        {formError && <Alert variant="destructive">
-          <AlertCircleIcon />
-          <AlertTitle>Unable to login</AlertTitle>
-          <AlertDescription>
-            <p>{formError}</p>
-          </AlertDescription>
-        </Alert>}
+        <FormError
+          hide={!form.formState.errors.formError}
+          title="Unable to login"
+          description={form.formState.errors.formError?.message}
+        />
         <div className="grid gap-6">
           <div className="grid gap-3">
             <FormField

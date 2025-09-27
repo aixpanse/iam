@@ -13,15 +13,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { applyFormErrors, cn, hasFormErrors } from "@/lib/utils"
-import { AlertCircleIcon, Loader2Icon } from "lucide-react"
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
+import { Loader2Icon } from "lucide-react"
 import { useState } from "react"
 import { redirect, useSearchParams } from "next/navigation"
 import { IconCheck } from "@tabler/icons-react"
+import FormError from "@/components/form-error"
 
 export default function SignupPage() {
   const searchParams = useSearchParams();
@@ -32,6 +28,7 @@ export default function SignupPage() {
     email: z.email({ message: 'Invalid email address' }),
     password: z.string().min(8, { message: "Password must have at least 8 characters" }),
     confirmPassword: z.string().min(8, { message: "Password must have at least 8 characters" }),
+    formError: z.string().optional(),
   })
     .refine((data) => data.password === data.confirmPassword, {
       message: 'Passwords are not the same',
@@ -46,7 +43,6 @@ export default function SignupPage() {
       confirmPassword: "",
     },
   })
-  const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -94,13 +90,11 @@ export default function SignupPage() {
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Create your account</h1>
         </div>
-        {formError && <Alert variant="destructive">
-          <AlertCircleIcon />
-          <AlertTitle>Unable to create account</AlertTitle>
-          <AlertDescription>
-            <p>{formError}</p>
-          </AlertDescription>
-        </Alert>}
+        <FormError
+          hide={!form.formState.errors.formError}
+          title="Unable to sign up"
+          description={form.formState.errors.formError?.message}
+        />
         <div className="grid gap-6">
           <div className="grid gap-3">
             <FormField
