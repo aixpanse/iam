@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { applyFormErrors, cn, hasFormErrors } from "@/lib/utils"
 import { AlertCircleIcon, Loader2Icon } from "lucide-react"
 import {
   Alert,
@@ -57,16 +57,8 @@ export default function SigninPage() {
       });
       const data = await res.json();
 
-      // apply errors to inputs
-      for (const error of data.errors) {
-        for (const field of error.path) {
-          form.setError(field, { message: error.message }, { shouldFocus: true })
-        }
-      }
-
-      // applay error to whole form
-      if (data.error) {
-        setFormError(data.error)
+      if (hasFormErrors(data)) {
+        applyFormErrors(form, data);
       } else {
         setFormError('')
         console.log(data.session)
@@ -77,9 +69,7 @@ export default function SigninPage() {
           if (!user?.labels?.includes('iam')) {
             await fetch("/api/signout", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ sessionId: 'current' }),
             });
             setFormError('You do not have an IAM account');
@@ -141,7 +131,7 @@ export default function SigninPage() {
                   <FormLabel>Password
                     <a
                       href="/auth/reset"
-                      className="ml-auto text-sm underline-offset-4 hover:underline text-black"
+                      className="ml-auto text-sm underline-offset-4 hover:underline"
                     >
                       Forgot your password?
                     </a>

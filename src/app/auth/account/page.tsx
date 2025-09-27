@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { applyFormErrors, cn, hasFormErrors } from "@/lib/utils"
 import { AlertCircleIcon, Loader2Icon, BadgeCheckIcon, BadgeAlertIcon } from "lucide-react"
 import {
   Alert,
@@ -56,7 +56,6 @@ export default function AccountPage() {
       const user = await getLoggedInUser();
       setUser(user);
       if (!user) redirect('/auth/signin');
-      console.log(user);
       userForm.reset({ name: user.name, email: user.email });
     };
     fetchUser();
@@ -65,25 +64,14 @@ export default function AccountPage() {
   async function onSubmitDelete(payload: z.infer<typeof DeleteFormSchema>) {
     const res = await fetch("/api/account", {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
 
-    // apply errors to inputs
-    for (const error of data.errors) {
-      for (const field of error.path) {
-        deleteForm.setError(field, { message: error.message }, { shouldFocus: true })
-      }
-    }
-
-    // applay error to whole form
-    if (data.error) {
-      deleteForm.setError('formError', { type: 'manual', message: data.error });
+    if (hasFormErrors(data)) {
+      applyFormErrors(deleteForm, data);
     } else {
-      deleteForm.clearErrors();
       redirect('/auth/signin');
     }
   }
@@ -91,25 +79,14 @@ export default function AccountPage() {
   async function onSubmitUser(payload: z.infer<typeof UserFormSchema>) {
     const res = await fetch("/api/account", {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-
-    // apply errors to inputs
-    for (const error of data.errors) {
-      for (const field of error.path) {
-        deleteForm.setError(field, { message: error.message }, { shouldFocus: true })
-      }
-    }
-
-    // applay error to whole form
-    if (data.error) {
-      userForm.setError('formError', { type: 'manual', message: data.error });
+    if (hasFormErrors(data)) {
+      applyFormErrors(userForm, data);
     } else {
-      userForm.clearErrors();
+      userForm.reset(payload);
     }
   }
 

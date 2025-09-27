@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { applyFormErrors, cn } from "@/lib/utils"
 import { AlertCircleIcon, Loader2Icon } from "lucide-react"
 import {
   Alert,
@@ -40,20 +40,7 @@ export default function ResetPasswordPage() {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-
-    // apply errors to inputs
-    for (const error of data.errors) {
-      for (const field of error.path) {
-        form.setError(field, { message: error.message }, { shouldFocus: true })
-      }
-    }
-
-    // applay error to whole form
-    if (data.error) {
-      form.setError("formError", { message: data.error }, { shouldFocus: true })
-    } else {
-      form.clearErrors();
-    }
+    applyFormErrors(form, data);
   }
 
   if (form.formState.isSubmitSuccessful) {

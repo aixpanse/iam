@@ -25,7 +25,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "./ui/input";
-import { cn } from "@/lib/utils";
+import { applyFormErrors, cn, hasFormErrors } from "@/lib/utils";
 import { useState } from "react";
 import { useCreateApp } from "@/hooks/use-apps";
 
@@ -49,19 +49,9 @@ export function CreateAppFormDialog({
     async function onSubmit(payload: z.infer<typeof FormSchema>) {
         createAppMutation.mutate(payload, {
             onSuccess: (data) => {
-                // apply errors to inputs
-                for (const error of data.errors) {
-                    for (const field of error.path) {
-                        if (field === 'name' || field === 'domain') {
-                            form.setError(field, { message: error.message }, { shouldFocus: true });
-                        }
-                    }
-                }
-
-                // apply error to whole form
-                if (data.error) {
-                    form.setError("formError", { message: data.error }, { shouldFocus: true });
-                } else if (!form.formState.errors.formError) {
+                if (hasFormErrors(data)) {
+                    applyFormErrors(form, data);
+                } else {
                     setOpen(false);
                     form.reset();
                 }
