@@ -13,6 +13,7 @@ import { getLoggedInUser } from "@/lib/auth/appwrite"
 import FormError from "@/components/form-error"
 import FormInput from "@/components/form-input"
 import SubmitButton from "@/components/submit-button"
+import Link from "next/link"
 
 const FormSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -133,9 +134,9 @@ export default function SigninPage() {
         </a>
         <div className="text-center text-sm">
           Don&apos;t have an account?{" "}
-          <a href={redirectUrl ? `/auth/signup?redirectUrl=${redirectUrl}` : '/auth/signup'} className="underline underline-offset-4">
+          <Link href={redirectUrl ? `/auth/signup?redirectUrl=${redirectUrl}` : '/auth/signup'} className="underline underline-offset-4">
             Sign up
-          </a>
+          </Link>
         </div>
       </form>
     </Form>

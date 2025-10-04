@@ -20,6 +20,7 @@ import { IconCheck } from "@tabler/icons-react"
 import FormError from "@/components/form-error"
 import FormInput from "@/components/form-input"
 import SubmitButton from "@/components/submit-button"
+import Link from "next/link"
 
 export default function SignupPage() {
   const searchParams = useSearchParams();
@@ -142,9 +143,9 @@ export default function SignupPage() {
         </Button>
         <div className="text-center text-sm">
           Already have an account?{" "}
-          <a href="/auth/signin" className="underline underline-offset-4">
+          <Link href={redirectUrl ? `/auth/signin?redirectUrl=${redirectUrl}` : '/auth/signin'} className="underline underline-offset-4">
             Sign in
-          </a>
+          </Link>
         </div>
       </form>
     </Form>

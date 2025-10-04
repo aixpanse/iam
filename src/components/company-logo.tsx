@@ -1,0 +1,34 @@
+"use client";
+import { useRest } from "@/hooks/use-rest";
+import { GalleryVerticalEnd } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
+import { App } from "@/lib/types";
+import { useRedirectUrl } from "@/hooks/use-redirect-url";
+import { Suspense } from "react";
+
+export default function CompanyLogo() {
+    const { appId } = useRedirectUrl('iam.sites.aixpanse.pl');
+    const { resource, isLoading } = useRest<App>(`/api/dashboard/apps/${appId}`);
+
+    if (isLoading) {
+        return <SkeletonLogo />;
+    }
+
+    return (
+        <a href="#" className="flex items-center gap-2 font-medium">
+            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+                <GalleryVerticalEnd className="size-4" />
+            </div>
+            {resource?.name || 'IAM'}
+        </a>
+    );
+}
+
+export function SkeletonLogo() {
+    return (
+        <div className="flex items-center gap-2">
+            <Skeleton className="w-8 h-7 rounded-xl" />
+            <Skeleton className="w-25 h-5 rounded-xl" />
+        </div>
+    );
+}

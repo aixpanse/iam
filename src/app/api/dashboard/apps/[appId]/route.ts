@@ -1,8 +1,8 @@
-import { adminClient } from "@/lib/appwrite/client";
-import { getLoggedInUser } from "@/lib/auth/appwrite";
-import { NextRequest, NextResponse } from "next/server";
-import { Models, Query, Teams, Users } from "node-appwrite";
-import z from "zod";
+import { adminClient } from '@/lib/appwrite/client';
+import { getLoggedInUser } from '@/lib/auth/appwrite';
+import { NextRequest, NextResponse } from 'next/server';
+import { Models, Query, Teams, Users } from 'node-appwrite';
+import z from 'zod';
 
 const FormSchema = z.object({
   name: z.string(),
@@ -12,9 +12,9 @@ const FormSchema = z.object({
 export async function PUT(request: NextRequest) {
   const user = await getLoggedInUser();
 
-  if (!user?.labels?.includes("iam")) {
+  if (!user?.labels?.includes('iam')) {
     return NextResponse.json(
-      { error: "Not allowed", errors: [] },
+      { error: 'Not allowed', errors: [] },
       { status: 403 },
     );
   }
@@ -22,7 +22,10 @@ export async function PUT(request: NextRequest) {
   const payload = await request.json();
   const { success, error } = FormSchema.safeParse(payload);
   if (!success) {
-    return NextResponse.json({ errors: error.issues }, { status: 422 });
+    return NextResponse.json(
+      { errors: error.issues },
+      { status: 422 },
+    );
   }
 
   try {
@@ -32,7 +35,10 @@ export async function PUT(request: NextRequest) {
       name: payload.name,
     });
 
-    return NextResponse.json({ error: null, errors: [] }, { status: 201 });
+    return NextResponse.json(
+      { error: null, errors: [] },
+      { status: 201 },
+    );
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message, errors: [] },
@@ -41,36 +47,29 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
-  const user = await getLoggedInUser();
-
-  if (!user?.labels?.includes("iam")) {
-    return NextResponse.json(
-      { error: "Not allowed", errors: [] },
-      { status: 403 },
-    );
-  }
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ appId: string }> },
+) {
+  const { appId } = await params;
 
   try {
     const teams = new Teams(adminClient);
-    const teamsList = await teams.list();
-    const result: Models.Team[] = [];
-    for (const team of teamsList.teams) {
-      const { memberships } = await teams.listMemberships({ teamId: team.$id });
-      const userMembership = memberships.find(
-        (m) => user && m.userId === user.$id && m.roles.includes("owner"),
-      );
-      if (userMembership) {
-        result.push(team);
-      }
-    }
+    const team = await teams.get({ teamId: appId });
 
     return NextResponse.json({
-      apps: result.map((r) => ({ id: r.$id, name: r.name, domain: r.$id })),
+      app: team,
       error: null,
       errors: [],
     });
   } catch (error: any) {
+    if (error.code === 404) {
+      return NextResponse.json(
+        { error: 'App not found', errors: [] },
+        { status: 404 },
+      );
+    }
+
     return NextResponse.json(
       { error: error.message, errors: [] },
       { status: 400 },

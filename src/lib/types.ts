@@ -1,3 +1,5 @@
+import { Models } from 'node-appwrite';
+
 export interface FormError {
   setError: (
     field: any,
@@ -11,3 +13,6 @@ export interface ErrorsData {
   errors: { path: string[]; message: string }[];
   error: string | null;
 }
+
+export type App = Models.Team;
+export type User = Models.User;
