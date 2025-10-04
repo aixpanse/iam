@@ -58,7 +58,7 @@ export async function GET(
     const team = await teams.get({ teamId: appId });
 
     return NextResponse.json({
-      app: team,
+      data: team,
       error: null,
       errors: [],
     });

@@ -1,4 +1,5 @@
 'use client';
+import { Resource } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
 
 const createGet = <T>(url: string) => {
@@ -18,7 +19,7 @@ const createGet = <T>(url: string) => {
 
     const data = await res.json();
 
-    return data.app as T;
+    return data as T;
   };
 };
 
@@ -27,9 +28,9 @@ export const useRest = <T>(url: string) => {
     data: resource,
     isLoading,
     error,
-  } = useQuery<T>({
-    queryKey: ['rest'],
-    queryFn: createGet<T>(url),
+  } = useQuery<Resource<T>>({
+    queryKey: [url],
+    queryFn: createGet<Resource<T>>(url),
     staleTime: 5 * 1000,
   });
 

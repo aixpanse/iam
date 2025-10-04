@@ -1,8 +1,7 @@
-import { adminClient } from "@/lib/appwrite/client";
-import { getLoggedInUser } from "@/lib/auth/appwrite";
-import { NextRequest, NextResponse } from "next/server";
-import { Models, Query, Teams, Users } from "node-appwrite";
-import z from "zod";
+import { adminClient } from '@/lib/appwrite/client';
+import { getLoggedInUser } from '@/lib/auth/appwrite';
+import { NextRequest, NextResponse } from 'next/server';
+import { Teams } from 'node-appwrite';
 
 export async function GET(
   request: NextRequest,
@@ -11,20 +10,22 @@ export async function GET(
   const user = await getLoggedInUser();
   const { appId } = await params;
 
-  if (!user?.labels?.includes("iam")) {
+  if (!user?.labels?.includes('iam')) {
     return NextResponse.json(
-      { error: "Not allowed", errors: [] },
+      { error: 'Not allowed', errors: [] },
       { status: 403 },
     );
   }
 
   try {
     const teams = new Teams(adminClient);
-    const { memberships } = await teams.listMemberships({ teamId: appId });
+    const { memberships } = await teams.listMemberships({
+      teamId: appId,
+    });
 
     return NextResponse.json({
-      users: memberships.map((m) => ({
-        id: m.userId,
+      data: memberships.map((m) => ({
+        $id: m.userId,
         name: m.userName,
         email: m.userEmail,
       })),

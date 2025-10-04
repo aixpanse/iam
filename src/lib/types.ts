@@ -14,5 +14,6 @@ export interface ErrorsData {
   error: string | null;
 }
 
+export type Resource<T> = { data: T } & ErrorsData;
 export type App = Models.Team;
 export type User = Models.User;

@@ -9,7 +9,8 @@ import Link from "next/link";
 export default function CompanyLogo() {
     const { appId, redirectUrl } = useRedirectUrl('iam.sites.aixpanse.pl');
     const { resource, isLoading } = useRest<App>(`/api/dashboard/apps/${appId}`);
-    const logoUrl = resource?.prefs?.logoUrl;
+    const logoUrl = resource?.data?.prefs?.logoUrl;
+    const name = resource?.data?.name || 'IAM';
 
     if (isLoading) {
         return <SkeletonLogo />;
@@ -20,11 +21,11 @@ export default function CompanyLogo() {
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
                 {
                     logoUrl ?
-                        <img src={logoUrl} alt={resource?.name || 'IAM'} className="rounded-md" /> :
+                        <img src={logoUrl} alt={name || 'IAM'} className="rounded-md" /> :
                         <GalleryVerticalEnd className="size-4" />
                 }
             </div>
-            {resource?.name || 'IAM'}
+            {name || 'IAM'}
         </Link>
     );
 }

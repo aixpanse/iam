@@ -1,4 +1,4 @@
-import { createResourceHooks } from "./use-api";
+import { createResourceHooks } from './use-api';
 
 // App-specific types
 export interface App {
@@ -14,9 +14,9 @@ export interface CreateAppData {
 
 // App-specific configuration
 const appsConfig = {
-  endpoint: "/api/dashboard/apps",
-  resourceKey: "apps",
-  queryKey: ["apps"],
+  endpoint: '/api/dashboard/apps',
+  resourceKey: 'data',
+  queryKey: ['apps'],
 };
 
 // Create app-specific hooks using the generic factory
@@ -25,7 +25,9 @@ const {
   useCreate: useCreateAppMutation,
   useUpdate: useUpdateAppMutation,
   useDelete: useDeleteAppMutation,
-} = createResourceHooks<App, CreateAppData, CreateAppData>(appsConfig);
+} = createResourceHooks<App, CreateAppData, CreateAppData>(
+  appsConfig,
+);
 
 // Export with more descriptive names
 export const useApps = useAppsQuery;

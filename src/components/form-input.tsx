@@ -9,6 +9,7 @@ export default function FormInput<T extends FieldValues>({
     control,
     disabled,
     type,
+    className
 }: {
     name: Path<T>;
     label: string;
@@ -16,13 +17,14 @@ export default function FormInput<T extends FieldValues>({
     control: Control<T>;
     disabled?: boolean;
     type?: string;
+    className?: string;
 }) {
     return (
         <FormField
             control={control}
             name={name}
             render={({ field }) => (
-                <FormItem>
+                <FormItem className={className}>
                     <FormLabel>{label}</FormLabel>
                     <FormControl>
                         <Input type={type} placeholder={placeholder} {...field} disabled={disabled} />

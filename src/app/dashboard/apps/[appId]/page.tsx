@@ -2,8 +2,6 @@
 import { use } from "react";
 import { Card } from "@/components/ui/card";
 import { UpdateAppForm } from "@/components/update-app-form";
-import { useApps } from "@/hooks/use-apps";
-import { useUsers } from "@/hooks/use-users";
 import {
     Table,
     TableBody,
@@ -15,27 +13,26 @@ import {
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useRest } from "@/hooks/use-rest";
+import { App, User } from "@/lib/types";
+import { Loader2Icon } from "lucide-react";
 
 export default function DashboardAppPage({ params }: { params: Promise<{ appId: string }> }) {
-    const { data, isLoading } = useApps();
-    const resolvedParams = use(params);
+    const appId = use(params).appId;
+    const { resource: app, isLoading } = useRest<App>(`/api/dashboard/apps/${appId}`);
+    const { resource: users, isLoading: isUsersLoading, error: usersError } = useRest<User[]>(`/api/dashboard/apps/${appId}/users`);
     const router = useRouter();
 
-    // Fetch users using the custom hook
-    const {
-        data: users = [],
-        isLoading: isUsersLoading,
-        error: usersError
-    } = useUsers(resolvedParams.appId);
-
-    const app = data?.find((app) => app.id === resolvedParams.appId);
-
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex items-center justify-center m-4">
+                <Loader2Icon className="animate-spin" />
+            </div>
+        );
     }
 
-    if (!app) {
-        return <div>App not found</div>;
+    if (!app?.data) {
+        return <div className="text-center m-4">App not found</div>;
     }
 
     return (
@@ -43,7 +40,7 @@ export default function DashboardAppPage({ params }: { params: Promise<{ appId: 
             <Button
                 onClick={() => router.back()}
                 variant="outline"
-                className="mx-4"
+                className="mx-4 mt-4"
             >
                 <svg
                     width="16"
@@ -60,7 +57,7 @@ export default function DashboardAppPage({ params }: { params: Promise<{ appId: 
                 </svg>
             </Button>
             <Card className="p-4 m-4">
-                <UpdateAppForm app={app} />
+                <UpdateAppForm app={app.data} />
             </Card>
             <Card className="py-2 px-4 m-4">
                 <Table>
@@ -85,16 +82,16 @@ export default function DashboardAppPage({ params }: { params: Promise<{ appId: 
                                     Error loading users
                                 </TableCell>
                             </TableRow>
-                        ) : users.length === 0 ? (
+                        ) : users?.data?.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={3} className="text-center">
                                     No users found
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            users.map(user => (
-                                <TableRow key={user.id}>
-                                    <TableCell>{user.id}</TableCell>
+                            users?.data?.map(user => (
+                                <TableRow key={user?.$id}>
+                                    <TableCell>{user?.$id}</TableCell>
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                 </TableRow>
