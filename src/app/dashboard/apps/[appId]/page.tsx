@@ -1,5 +1,5 @@
 'use client';
-import { use } from "react";
+import { use, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { UpdateAppForm } from "@/components/update-app-form";
 import {
@@ -22,6 +22,7 @@ export default function DashboardAppPage({ params }: { params: Promise<{ appId: 
     const { resource: app, isLoading } = useRest<App>(`/api/dashboard/apps/${appId}`);
     const { resource: users, isLoading: isUsersLoading, error: usersError } = useRest<User[]>(`/api/dashboard/apps/${appId}/users`);
     const router = useRouter();
+    const [iframeUrl, setIframeUrl] = useState<string>(`${process.env.NEXT_PUBLIC_APP_URL}/auth/signin?redirectUrl=https://${appId}`);
 
     if (isLoading) {
         return (
@@ -57,7 +58,21 @@ export default function DashboardAppPage({ params }: { params: Promise<{ appId: 
                 </svg>
             </Button>
             <Card className="p-4 m-4">
-                <UpdateAppForm app={app.data} />
+                <UpdateAppForm app={app.data} onSuccess={() => {
+                    setIframeUrl('#');
+                    setTimeout(() => {
+                        setIframeUrl(`${process.env.NEXT_PUBLIC_APP_URL}/auth/signin?redirectUrl=https://${app.data?.prefs?.redirectUrl}`);
+                    }, 100);
+                }} />
+            </Card>
+            <Card className="p-4 m-4">
+                <div className="text-sm font-mediu ">Preview</div>
+                <iframe
+                    src={iframeUrl}
+                    className="w-full rounded"
+                    title="App Preview"
+                    style={{ zoom: '0.6', height: '600px', overflow: 'hidden', border: 'solid', borderColor: 'lightgray', borderWidth: '2px', borderRadius: '8px' }}
+                />
             </Card>
             <Card className="py-2 px-4 m-4">
                 <Table>

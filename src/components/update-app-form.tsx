@@ -14,24 +14,25 @@ const FormSchema = z.object({
     id: z.string().min(1, { message: "Id is required" }),
     name: z.string().min(1, { message: "App name is required" }),
     domain: z.string().min(1, { message: "Domain is required" }),
-    logoUrl: z.url().optional(),
-    imageUrl: z.url().optional(),
+    logoUrl: z.union([z.string().url(), z.string().length(0)]).optional(),
+    imageUrl: z.union([z.string().url(), z.string().length(0)]).optional(),
     formError: z.string().optional(),
 });
 
 
 export function UpdateAppForm({
     className,
-    ...props
-}: React.ComponentProps<"form"> & { app: App }) {
+    app,
+    onSuccess
+}: { className?: string, app: App, onSuccess?: () => void }) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            id: props.app.$id,
-            name: props.app.name,
-            domain: props.app.$id,
-            logoUrl: props.app.prefs?.logoUrl || '',
-            imageUrl: props.app.prefs?.imageUrl || ''
+            id: app.$id,
+            name: app.name,
+            domain: app.$id,
+            logoUrl: app.prefs?.logoUrl || '',
+            imageUrl: app.prefs?.imageUrl || ''
         },
     });
     const updateAppMutation = useUpdateApp();
@@ -55,9 +56,12 @@ export function UpdateAppForm({
                     form.reset({
                         id: payload.id,
                         name: payload.name,
-                        domain: payload.domain
+                        domain: payload.domain,
+                        logoUrl: payload.logoUrl,
+                        imageUrl: payload.imageUrl,
                     });
                 }
+                onSuccess?.();
             },
             onError: (error) => {
                 form.setError("formError", { message: error.message }, { shouldFocus: true });
@@ -67,7 +71,7 @@ export function UpdateAppForm({
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6" {...props}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
                 {form.formState.errors.formError && <Alert variant="destructive">
                     <AlertCircleIcon />
                     <AlertTitle>Unable to create an app</AlertTitle>

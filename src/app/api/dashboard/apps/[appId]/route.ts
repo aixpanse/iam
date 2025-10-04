@@ -35,6 +35,14 @@ export async function PUT(request: NextRequest) {
       name: payload.name,
     });
 
+    await teams.updatePrefs({
+      teamId: payload.domain,
+      prefs: {
+        logoUrl: payload.logoUrl,
+        imageUrl: payload.imageUrl,
+      },
+    });
+
     return NextResponse.json(
       { error: null, errors: [] },
       { status: 201 },
