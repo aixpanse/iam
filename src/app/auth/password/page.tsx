@@ -3,20 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
-import { Loader2Icon } from "lucide-react"
+import { Form } from "@/components/ui/form"
+import { applyFormErrors, hasFormErrors } from "@/lib/utils"
 import { redirect, useSearchParams } from "next/navigation"
 import { IconCheck } from "@tabler/icons-react"
 import FormError from "@/components/form-error"
+import FormInput from "@/components/form-input"
+import SubmitButton from "@/components/submit-button"
 
 const FormSchema = z.object({
   password: z.string().min(8, { message: "Password must have at least 8 characters" }),
@@ -38,7 +31,6 @@ export default function UpdatePasswordPage() {
   async function onSubmit(payload: z.infer<typeof FormSchema>) {
     const res = await fetch("/api/reset", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         password: payload.password,
         userId: searchParams.get('userId'),
@@ -47,18 +39,8 @@ export default function UpdatePasswordPage() {
     });
     const data = await res.json();
 
-    // apply errors to inputs
-    for (const error of data.errors) {
-      for (const field of error.path) {
-        form.setError(field, { message: error.message }, { shouldFocus: true })
-      }
-    }
-
-    // applay error to whole form
-    if (data.error) {
-      form.setError("formError", { type: 'manual', message: data.error })
-    } else {
-      form.clearErrors();
+    if (hasFormErrors(data)) {
+      applyFormErrors(form, data);
     }
   }
 
@@ -77,7 +59,7 @@ export default function UpdatePasswordPage() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6")}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={"flex flex-col gap-6"}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Enter your new password</h1>
         </div>
@@ -86,42 +68,13 @@ export default function UpdatePasswordPage() {
           title="Unable to update password"
           description={form.formState.errors.formError?.message}
         />
-        <div className="grid gap-6">
-          <div className="grid gap-3">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="grid gap-3">
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || !form.formState.isDirty}>
-            {form.formState.isSubmitting && <Loader2Icon className="animate-spin" />}
-            Save
-          </Button>
-        </div>
+        <FormInput type="password" name="password" label="Password" control={form.control} />
+        <FormInput type="password" name="confirmPassword" label="Confirm Password" control={form.control} />
+        <SubmitButton
+          label="Save"
+          loading={form.formState.isSubmitting}
+          disabled={form.formState.isSubmitting || !form.formState.isDirty}
+        />
         <div className="text-center text-sm">
           Already have an account?{" "}
           <a href="/auth/signin" className="underline underline-offset-4">

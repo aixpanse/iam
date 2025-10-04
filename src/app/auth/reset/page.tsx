@@ -3,20 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Form } from "@/components/ui/form"
 import { applyFormErrors, cn } from "@/lib/utils"
-import { Loader2Icon } from "lucide-react"
 import { redirect } from "next/navigation"
 import { IconCheck } from "@tabler/icons-react"
 import FormError from "@/components/form-error"
+import FormInput from "@/components/form-input"
+import SubmitButton from "@/components/submit-button"
 
 const FormSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -66,27 +59,12 @@ export default function ResetPasswordPage() {
           title="Unable to send reset email"
           description={form.formState.errors.formError?.message}
         />
-        <div className="grid gap-6">
-          <div className="grid gap-3">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="m@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || !form.formState.isDirty}>
-            {form.formState.isSubmitting && <Loader2Icon className="animate-spin" />}
-            Reset
-          </Button>
-        </div>
+        <FormInput name="email" label="Email" placeholder="m@example.com" control={form.control} />
+        <SubmitButton
+          label="Reset"
+          loading={form.formState.isSubmitting}
+          disabled={form.formState.isSubmitting || !form.formState.isDirty}
+        />
       </form>
     </Form>
   )
