@@ -17,7 +17,7 @@ export default function CompanyImage() {
         <img
             src={imageUrl}
             alt="Image"
-            className="absolute inset-0 h-full w-full object-c dark:brightness-[0.2] dark:grayscale"
+            className="absolute inset-0 h-full w-full object-contain dark:brightness-[0.2] dark:grayscale"
         />
     );
 }
