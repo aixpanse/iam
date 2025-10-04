@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import CompanyLogo, { SkeletonLogo } from "@/components/company-logo";
+import CompanyImage, { SkeletonImage } from "@/components/company-image";
 
 export default function AuthLayout({
   children,
@@ -36,11 +37,9 @@ export default function AuthLayout({
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/iam.jpg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+        <Suspense fallback={<SkeletonImage />}>
+          <CompanyImage />
+        </Suspense>
       </div>
     </div>
   );
