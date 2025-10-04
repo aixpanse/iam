@@ -4,10 +4,10 @@ import { GalleryVerticalEnd } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 import { App } from "@/lib/types";
 import { useRedirectUrl } from "@/hooks/use-redirect-url";
-import { Suspense } from "react";
+import Link from "next/link";
 
 export default function CompanyLogo() {
-    const { appId } = useRedirectUrl('iam.sites.aixpanse.pl');
+    const { appId, redirectUrl } = useRedirectUrl('iam.sites.aixpanse.pl');
     const { resource, isLoading } = useRest<App>(`/api/dashboard/apps/${appId}`);
 
     if (isLoading) {
@@ -15,12 +15,12 @@ export default function CompanyLogo() {
     }
 
     return (
-        <a href="#" className="flex items-center gap-2 font-medium">
+        <Link href={redirectUrl} className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
                 <GalleryVerticalEnd className="size-4" />
             </div>
             {resource?.name || 'IAM'}
-        </a>
+        </Link>
     );
 }
 

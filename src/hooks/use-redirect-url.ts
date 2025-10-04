@@ -4,7 +4,8 @@ export const useRedirectUrl = (
   defaultRedirectUrl?: string,
 ) => {
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirectUrl');
+  const redirectUrl =
+    searchParams.get('redirectUrl') || '#';
   const appId = redirectUrl
     ? new URL(redirectUrl).host
     : defaultRedirectUrl;
