@@ -2,26 +2,17 @@
 import { use, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { UpdateAppForm } from "@/components/update-app-form";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useRest } from "@/hooks/use-rest";
-import { App, User } from "@/lib/types";
+import { App } from "@/lib/types";
 import { Loader2Icon } from "lucide-react";
+import { DeleteForm } from "@/components/delete-resource-form";
 
 export default function DashboardAppPage({ params }: { params: Promise<{ appId: string }> }) {
     const appId = use(params).appId;
     const iframeSrc = `${process.env.NEXT_PUBLIC_APP_URL}/auth/signin?redirectUrl=https://${appId}`;
     const { resource: app, isLoading } = useRest<App>(`/api/dashboard/apps/${appId}`);
-    const { resource: users, isLoading: isUsersLoading, error: usersError } = useRest<User[]>(`/api/dashboard/apps/${appId}/users`);
     const router = useRouter();
     const [iframeUrl, setIframeUrl] = useState<string>(iframeSrc);
 
@@ -77,46 +68,10 @@ export default function DashboardAppPage({ params }: { params: Promise<{ appId: 
                     />
                 </div>
             </Card>
-            <Card className="py-2 px-4 m-4">
-                <Table>
-                    <TableCaption>A list of app users.</TableCaption>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead >Id</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isUsersLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center">
-                                    Loading users...
-                                </TableCell>
-                            </TableRow>
-                        ) : usersError ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center text-red-500">
-                                    Error loading users
-                                </TableCell>
-                            </TableRow>
-                        ) : users?.data?.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center">
-                                    No users found
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            users?.data?.map(user => (
-                                <TableRow key={user?.$id}>
-                                    <TableCell>{user?.$id}</TableCell>
-                                    <TableCell>{user.name}</TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
+            <Card className="p-4 m-4">
+                <DeleteForm resourceUrl={`/api/dashboard/apps/${appId}`} onDelete={() => router.push('/dashboard/apps')}
+                    className="items-end"
+                    classNameButton="w-40" />
             </Card>
         </div >
     );

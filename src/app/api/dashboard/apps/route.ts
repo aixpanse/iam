@@ -84,11 +84,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      data: result.map((r) => ({
-        id: r.$id,
-        name: r.name,
-        domain: r.$id,
-      })),
+      data: result,
       error: null,
       errors: [],
     });

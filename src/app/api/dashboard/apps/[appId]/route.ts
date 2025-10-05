@@ -84,3 +84,32 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ appId: string }> },
+) {
+  const { appId } = await params;
+
+  try {
+    const teams = new Teams(adminClient);
+    await teams.delete({ teamId: appId });
+
+    return NextResponse.json({
+      error: null,
+      errors: [],
+    });
+  } catch (error: any) {
+    if (error.code === 404) {
+      return NextResponse.json(
+        { error: 'App not found', errors: [] },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(
+      { error: error.message, errors: [] },
+      { status: 400 },
+    );
+  }
+}

@@ -3,18 +3,18 @@ import { Card } from "@/components/ui/card";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
 import { CreateAppFormDialog } from "@/components/create-app-form-dialog";
-import { useApps } from "@/hooks/use-apps";
 import { useRouter } from "next/navigation";
+import { useRest } from "@/hooks/use-rest";
+import { App } from "@/lib/types";
 
 export default function DashboardAppsPage() {
-    const { data: apps = [], isLoading, error } = useApps();
+    const { resource: apps, isLoading, error } = useRest<App[]>("/api/dashboard/apps");
     const router = useRouter();
 
     if (error) {
@@ -32,14 +32,13 @@ export default function DashboardAppsPage() {
             <div className="flex justify-end">
                 <CreateAppFormDialog />
             </div>
-            <Card className="py-2">
+            <Card className="p-0">
                 <Table>
-                    <TableCaption>A list of your apps.</TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead >Id</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Domain</TableHead>
+                            <TableHead >Id</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -49,18 +48,18 @@ export default function DashboardAppsPage() {
                                     Loading apps...
                                 </TableCell>
                             </TableRow>
-                        ) : apps.length === 0 ? (
+                        ) : apps?.data.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={3} className="text-center">
                                     No apps found
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            apps.map(app => (
-                                <TableRow key={app.id} onClick={() => router.push(`/dashboard/apps/${app.id}`)}>
-                                    <TableCell>{app.id}</TableCell>
+                            apps?.data.map(app => (
+                                <TableRow key={app.$id} onClick={() => router.push(`/dashboard/apps/${app.$id}`)}>
                                     <TableCell>{app.name}</TableCell>
-                                    <TableCell>{app.domain}</TableCell>
+                                    <TableCell>{app.$id}</TableCell>
+                                    <TableCell>{app.$id}</TableCell>
                                 </TableRow>
                             ))
                         )}

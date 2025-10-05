@@ -22,25 +22,26 @@ import {
 import { Input } from "./ui/input";
 import { applyFormErrors, cn, hasFormErrors } from "@/lib/utils";
 import { useState } from "react";
-import { useCreateApp } from "@/hooks/use-apps";
 import FormError from "./form-error";
+import { useRestCreate } from "@/hooks/use-rest";
+import { App } from "@/lib/types";
 
 const FormSchema = z.object({
     name: z.string().min(1, { message: "App name is required" }),
     domain: z.string().min(1, { message: "Domain is required" }),
     formError: z.string().optional(),
 });
-
+type FormType = z.infer<typeof FormSchema>;
 export function CreateAppFormDialog({
     className,
     ...props
 }: React.ComponentProps<"form">) {
-    const form = useForm<z.infer<typeof FormSchema>>({
+    const form = useForm<FormType>({
         resolver: zodResolver(FormSchema),
         defaultValues: { name: "", domain: "" },
     });
     const [open, setOpen] = useState(false);
-    const createAppMutation = useCreateApp();
+    const createAppMutation = useRestCreate<FormType, App>('/api/dashboard/apps');
 
     async function onSubmit(payload: z.infer<typeof FormSchema>) {
         createAppMutation.mutate(payload, {
