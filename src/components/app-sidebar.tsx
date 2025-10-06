@@ -4,18 +4,12 @@ import {
     SidebarContent,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 const items = [
-    {
-        title: "Home",
-        url: "/",
-        icon: Home,
-    },
     {
         title: "Dashboard",
         url: "/dashboard",
