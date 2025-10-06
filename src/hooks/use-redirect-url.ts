@@ -9,5 +9,5 @@ export const useRedirectUrl = (
     ? new URL(redirectUrl).host
     : defaultRedirectUrl;
 
-  return { appId, redirectUrl: redirectUrl || '#' };
+  return { appId, redirectUrl: redirectUrl || '/' };
 };

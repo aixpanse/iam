@@ -44,7 +44,7 @@ export default function AppBar({ showSidebar }: { showSidebar?: boolean }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="end">
                         {hasIamAccess(user) && (
-                            <DropdownMenuItem onClick={() => router.push('/dashboard')}>Dashboard</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => router.push('/dashboard/apps')}>Dashboard</DropdownMenuItem>
                         )}
                         <DropdownMenuItem onClick={() => router.push('/auth/account')} disabled={!user}>Profile</DropdownMenuItem>
                         <DropdownMenuItem onClick={handleLogout} disabled={!user}>

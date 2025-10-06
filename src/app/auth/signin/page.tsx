@@ -65,7 +65,7 @@ export default function SigninPage() {
             form.setValue('formError', 'You do not have an IAM account');
             return;
           }
-          redirect('/dashboard');
+          redirect('/dashboard/apps');
         } else {
           if (redirectUrl.startsWith('http')) {
             const url = new URL(redirectUrl);
@@ -126,12 +126,12 @@ export default function SigninPage() {
           </svg>
           Login with GitHub
         </Button>
-        <a
+        <Link
           href="/auth/reset"
           className="text-center text-sm underline-offset-4 underline"
         >
           Forgot your password?
-        </a>
+        </Link>
         <div className="text-center text-sm">
           Don&apos;t have an account?{" "}
           <Link href={redirectUrl ? `/auth/signup?redirectUrl=${redirectUrl}` : '/auth/signup'} className="underline underline-offset-4">

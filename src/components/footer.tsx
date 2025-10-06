@@ -1,14 +1,16 @@
+import Link from "next/link";
+
 export default function Footer() {
     return (
         <div className="bg-white/10 backdrop-blur-lg border-t border-black/10 px-6 py-4 z-50">
             <div className="flex justify-between items-center">
-                <div className="text-sm">
+                <a className="text-sm hover:underline" href="/">
                     © 2024 IAM. All rights reserved.
-                </div>
+                </a>
                 <div className="flex gap-6 text-sm">
-                    <a href="/privacy">Privacy</a>
-                    <a href="/terms" >Terms</a>
-                    <a href="/contact" >Contact</a>
+                    <Link href="/privacy" className="hover:underline">Privacy</Link>
+                    <Link href="/terms" className="hover:underline">Terms</Link>
+                    <Link href="/contact" className="hover:underline">Contact</Link>
                 </div>
             </div>
         </div>
