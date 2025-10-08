@@ -100,5 +100,6 @@ export const useRestCreate = <TBody, T>(url: string) => {
         queryKey: [url],
       });
     },
+    retry: 2,
   });
 };

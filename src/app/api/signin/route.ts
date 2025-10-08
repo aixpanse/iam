@@ -50,13 +50,19 @@ export async function POST(request: NextRequest) {
       );
 
       if (!isUserMember) {
-        await teams.createMembership({
-          teamId: payload.domain,
-          roles: ['member'],
-          userId: session.userId,
-          email: payload.email,
-          name: payload.name,
-        });
+        return NextResponse.json(
+          {
+            data: {
+              sessionId: session.$id,
+              session: session.secret,
+            },
+            error: null,
+            errors: [],
+          },
+          {
+            status: 302,
+          },
+        );
       }
     }
 

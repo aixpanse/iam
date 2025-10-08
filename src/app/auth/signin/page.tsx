@@ -14,6 +14,7 @@ import FormError from "@/components/form-error"
 import FormInput from "@/components/form-input"
 import SubmitButton from "@/components/submit-button"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const FormSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -33,6 +34,7 @@ export default function SigninPage() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirectUrl');
   const domain = redirectUrl?.startsWith('http') ? (new URL(redirectUrl)).hostname : undefined;
+  const router = useRouter();
 
   async function onSubmit(payload: z.infer<typeof FormSchema>) {
     try {
@@ -45,17 +47,24 @@ export default function SigninPage() {
         },
         body: JSON.stringify({ ...payload, domain }),
       });
+
+      if (res.status === 302 && redirectUrl) {
+        const data = await res.json();
+        await setCookie(SESSION_ID, data.data.session);
+        const sessionId = data.data.sessionId;
+        router.push(`/auth/join?redirectUrl=${redirectUrl}&sessionId=${sessionId}`);
+        return;
+      }
+
       const data = await res.json();
 
       if (hasFormErrors(data)) {
         applyFormErrors(form, data);
       } else {
         form.setValue('formError', '')
-        console.log(data.session)
         await setCookie(SESSION_ID, data.session);
         if (!redirectUrl) {
           const user = await getLoggedInUser();
-          console.log(user)
           if (!user?.labels?.includes('iam')) {
             await fetch("/api/signout", {
               method: "POST",

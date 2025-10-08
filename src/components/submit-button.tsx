@@ -5,15 +5,17 @@ export default function SubmitButton({
     label,
     loading,
     disabled,
-    className
+    className,
+    onClick,
 }: {
-    label: string,
-    loading: boolean,
-    disabled?: boolean,
-    className?: string
+    label: string;
+    loading: boolean;
+    disabled?: boolean;
+    className?: string;
+    onClick?: () => void;
 }) {
     return (
-        <Button type="submit" className={`w-full ${className}`} disabled={disabled}>
+        <Button onClick={onClick} type="submit" className={`w-full ${className}`} disabled={disabled}>
             {loading && <Loader2Icon className="animate-spin" />}
             {label}
         </Button>
